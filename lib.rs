@@ -10,6 +10,9 @@
 //! according to logical structure, rather than code structure. By using logging scopes the logging
 //! context is tied to code flow again, which is less expressive.
 //!
+//! It is generally advised **NOT** to use `slog_scope` in libraries. Read more in
+//! [slog-rs FAQ](https://github.com/slog-rs/slog/wiki/FAQ#do-i-have-to-pass-logger-around)
+//!
 //! ```
 //! #[macro_use(o, slog_info, slog_log)]
 //! extern crate slog;

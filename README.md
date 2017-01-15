@@ -23,3 +23,7 @@
 [slog-rs]: //github.com/slog-rs/slog
 
 `slog-scope` allows logging without manually handling `Logger` objects.
+
+It is generally advised **NOT** to use `slog_scope` in libraries. Read more in
+[slog-rs
+FAQ](https://github.com/slog-rs/slog/wiki/FAQ#do-i-have-to-pass-logger-around)
