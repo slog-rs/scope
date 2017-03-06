@@ -39,7 +39,7 @@
 
 #![warn(missing_docs)]
 
-#[macro_use(o, slog_log, slog_trace, slog_debug, slog_info, slog_warn, slog_error)]
+#[macro_use(o)]
 extern crate slog;
 #[macro_use]
 extern crate lazy_static;
@@ -71,7 +71,7 @@ thread_local! {
 lazy_static! {
     static ref GLOBAL_LOGGER : ArcCell<slog::Logger> = ArcCell::new(
         Arc::new(
-            slog::Logger::root(slog::Discard, o!())
+            slog::Logger::root(slog::Discard, o!()).into_erased()
         )
     );
 }
