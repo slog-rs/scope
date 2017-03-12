@@ -14,13 +14,13 @@
 //! [slog-rs FAQ](https://github.com/slog-rs/slog/wiki/FAQ#do-i-have-to-pass-logger-around)
 //!
 //! ```
-//! #[macro_use(o, slog_info, slog_log)]
+//! #[macro_use(o, slog_info, slog_log, slog_record, slog_record_static, slog_b)]
 //! extern crate slog;
 //! #[macro_use]
 //! extern crate slog_scope;
 //! extern crate slog_term;
 //!
-//! use slog::DrainExt;
+//! use slog::Drain;
 //!
 //! fn foo() {
 //!     slog_info!(slog_scope::logger(), "foo");
@@ -28,7 +28,11 @@
 //! }
 //!
 //! fn main() {
-//!     let log = slog::Logger::root(slog_term::streamer().stderr().build().fuse(), o!("version" => "0.5"));
+//!     let plain = slog_term::PlainSyncDecorator::new(std::io::stdout());
+//!     let log = slog::Logger::root(
+//!         slog_term::FullFormat::new(plain)
+//!         .build().fuse(), o!()
+//!     );
 //!
 //!     slog_scope::set_global_logger(log);
 //!     slog_scope::scope(slog_scope::logger().new(o!("scope" => "1")),
