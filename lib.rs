@@ -75,7 +75,7 @@ thread_local! {
 lazy_static! {
     static ref GLOBAL_LOGGER : ArcCell<slog::Logger> = ArcCell::new(
         Arc::new(
-            slog::Logger::root(slog::Discard, o!()).into_erased()
+            slog::Logger::root(slog::Discard, o!())
         )
     );
 }
