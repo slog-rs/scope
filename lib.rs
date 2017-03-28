@@ -86,9 +86,46 @@ lazy_static! {
     );
 }
 
+/// Guard resetting global logger
+///
+/// On drop it will reset global logger to `slog::Discard`.
+/// This will `drop` any existing global logger.
+pub struct GlobalLoggerGuard {
+    canceled : bool,
+}
+
+impl GlobalLoggerGuard {
+
+    fn new() -> Self {
+        GlobalLoggerGuard {
+            canceled: false,
+        }
+    }
+
+    /// Cancel resetting global logger
+    pub fn cancel_reset(mut self) {
+        self.canceled = true;
+    }
+}
+
+impl Drop for GlobalLoggerGuard {
+    fn drop(&mut self) {
+        if !self.canceled {
+            let _ = GLOBAL_LOGGER.set(
+                Arc::new(
+                    slog::Logger::root(slog::Discard, o!())
+                    )
+                );
+        }
+    }
+}
+
+
 /// Set global `Logger` that is returned by calls like `logger()` outside of any logging scope.
-pub fn set_global_logger(l: slog::Logger) {
+pub fn set_global_logger(l: slog::Logger) -> GlobalLoggerGuard {
     let _ = GLOBAL_LOGGER.set(Arc::new(l));
+
+    GlobalLoggerGuard::new()
 }
 
 struct ScopeGuard;
