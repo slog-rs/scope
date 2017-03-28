@@ -56,17 +56,23 @@ use std::cell::RefCell;
 use crossbeam::sync::ArcCell;
 
 /// Log a critical level message using current scope logger
-#[macro_export] macro_rules! crit( ($($args:tt)+) => { slog_crit![$crate::logger(), $($args)+]; };);
+#[macro_export]
+macro_rules! crit( ($($args:tt)+) => { slog_crit![$crate::logger(), $($args)+]; };);
 /// Log a error level message using current scope logger
-#[macro_export] macro_rules! error( ($($args:tt)+) => { slog_error![$crate::logger(), $($args)+]; };);
+#[macro_export]
+macro_rules! error( ($($args:tt)+) => { slog_error![$crate::logger(), $($args)+]; };);
 /// Log a warning level message using current scope logger
-#[macro_export] macro_rules! warn( ($($args:tt)+) => { slog_warn![$crate::logger(), $($args)+]; };);
+#[macro_export]
+macro_rules! warn( ($($args:tt)+) => { slog_warn![$crate::logger(), $($args)+]; };);
 /// Log a info level message using current scope logger
-#[macro_export] macro_rules! info( ($($args:tt)+) => { slog_info![$crate::logger(), $($args)+]; };);
+#[macro_export]
+macro_rules! info( ($($args:tt)+) => { slog_info![$crate::logger(), $($args)+]; };);
 /// Log a debug level message using current scope logger
-#[macro_export] macro_rules! debug( ($($args:tt)+) => { slog_debug![$crate::logger(), $($args)+]; };);
+#[macro_export]
+macro_rules! debug( ($($args:tt)+) => { slog_debug![$crate::logger(), $($args)+]; };);
 /// Log a trace level message using current scope logger
-#[macro_export] macro_rules! trace( ($($args:tt)+) => { slog_trace![$crate::logger(), $($args)+]; };);
+#[macro_export]
+macro_rules! trace( ($($args:tt)+) => { slog_trace![$crate::logger(), $($args)+]; };);
 
 thread_local! {
     static TL_SCOPES: RefCell<Vec<slog::Logger>> = RefCell::new(Vec::with_capacity(8))
@@ -90,9 +96,7 @@ struct ScopeGuard;
 
 impl ScopeGuard {
     fn new(logger: slog::Logger) -> Self {
-        TL_SCOPES.with(|s| {
-            s.borrow_mut().push(logger);
-        });
+        TL_SCOPES.with(|s| { s.borrow_mut().push(logger); });
 
         ScopeGuard
     }
@@ -100,9 +104,7 @@ impl ScopeGuard {
 
 impl Drop for ScopeGuard {
     fn drop(&mut self) {
-        TL_SCOPES.with(|s| {
-            s.borrow_mut().pop().expect("TL_SCOPES should contain a logger");
-        })
+        TL_SCOPES.with(|s| { s.borrow_mut().pop().expect("TL_SCOPES should contain a logger"); })
     }
 }
 
@@ -111,8 +113,8 @@ pub fn logger() -> Logger {
     TL_SCOPES.with(|s| {
         let s = s.borrow();
         match s.last() {
-          Some(logger) => logger.clone(),
-          None => (*GLOBAL_LOGGER.get()).clone(),
+            Some(logger) => logger.clone(),
+            None => (*GLOBAL_LOGGER.get()).clone(),
         }
     })
 }
