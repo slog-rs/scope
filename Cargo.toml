@@ -20,3 +20,4 @@ crossbeam = "0.2.9"
 
 [dev-dependencies]
 slog-term = "~2.0.0-2"
+slog-async = "~2.0.0-2"
