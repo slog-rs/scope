@@ -90,6 +90,7 @@ lazy_static! {
 ///
 /// On drop it will reset global logger to `slog::Discard`.
 /// This will `drop` any existing global logger.
+#[must_use]
 pub struct GlobalLoggerGuard {
     canceled : bool,
 }
