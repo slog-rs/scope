@@ -34,7 +34,8 @@
 //!         .build().fuse(), slog_o!()
 //!     );
 //!
-//!     slog_scope::set_global_logger(log);
+//!     // Make sure to save the guard, see documentation for more information
+//!     let _guard = slog_scope::set_global_logger(log);
 //!     slog_scope::scope(slog_scope::logger().new(slog_o!("scope" => "1")),
 //!         || foo()
 //!     );
