@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.0.0-3.1 - 2017-04-06
+### Fixed
+
+* Example in documentation was not saving the guard
+
 ## 2.0.0-3.0 - 2017-03-27
+### Changed
 
 * Add `GlobalLoggerGuard`
 * Bump dependencies
