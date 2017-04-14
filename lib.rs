@@ -24,7 +24,8 @@
 //!
 //! fn foo() {
 //!     slog_info!(slog_scope::logger(), "foo");
-//!     info!("foo"); // Same as above, but more ergonomic.
+//!     info!("foo"); // Same as above, but more ergonomic and a bit faster
+//!                   // since it uses `with_logger`
 //! }
 //!
 //! fn main() {
