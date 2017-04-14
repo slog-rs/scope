@@ -1,6 +1,6 @@
 //! Logging scopes for slog-rs
 //!
-//! Logging scopes are convinience functionality for slog-rs to free user from manually passing
+//! Logging scopes are convenience functionality for slog-rs to free user from manually passing
 //! `Logger` objects around.
 //!
 //! Set of macros is also provided as an alternative to original `slog` crate macros, for logging
@@ -76,7 +76,7 @@ macro_rules! debug( ($($args:tt)+) => { slog_debug![$crate::logger(), $($args)+]
 macro_rules! trace( ($($args:tt)+) => { slog_trace![$crate::logger(), $($args)+]; };);
 
 thread_local! {
-    static TL_SCOPES: RefCell<Vec<slog::Logger>> = RefCell::new(Vec::with_capacity(8))
+    static TL_SCOPES: RefCell<Vec<*const slog::Logger>> = RefCell::new(Vec::with_capacity(8))
 }
 
 lazy_static! {
@@ -134,8 +134,8 @@ struct ScopeGuard;
 
 
 impl ScopeGuard {
-    fn new(logger: slog::Logger) -> Self {
-        TL_SCOPES.with(|s| { s.borrow_mut().push(logger); });
+    fn new(logger: &slog::Logger) -> Self {
+        TL_SCOPES.with(|s| { s.borrow_mut().push(logger as *const Logger); });
 
         ScopeGuard
     }
@@ -152,8 +152,23 @@ pub fn logger() -> Logger {
     TL_SCOPES.with(|s| {
         let s = s.borrow();
         match s.last() {
-            Some(logger) => logger.clone(),
+            Some(logger) => (unsafe {&**logger}).clone(),
             None => (*GLOBAL_LOGGER.get()).clone(),
+        }
+    })
+}
+
+/// Access the `Logger` for the current logging scope
+///
+/// This function doesn't have to clone the Logger
+/// so it might be a bit faster.
+pub fn with_logger<F, R>(f : F) -> R
+where F : FnOnce(&Logger) -> R {
+    TL_SCOPES.with(|s| {
+        let s = s.borrow();
+        match s.last() {
+            Some(logger) => f(unsafe {&**logger}),
+            None => f(&(*GLOBAL_LOGGER.get())),
         }
     })
 }
@@ -176,9 +191,9 @@ pub fn logger() -> Logger {
 ///
 /// Note: Thread scopes are thread-local. Each newly spawned thread starts
 /// with a global logger, as a current logger.
-pub fn scope<SF, R>(logger: slog::Logger, f: SF) -> R
+pub fn scope<SF, R>(logger: &slog::Logger, f: SF) -> R
     where SF: FnOnce() -> R
 {
-    let _guard = ScopeGuard::new(logger);
+    let _guard = ScopeGuard::new(&logger);
     f()
 }
