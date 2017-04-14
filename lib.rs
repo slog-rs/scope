@@ -36,7 +36,7 @@
 //!
 //!     // Make sure to save the guard, see documentation for more information
 //!     let _guard = slog_scope::set_global_logger(log);
-//!     slog_scope::scope(slog_scope::logger().new(slog_o!("scope" => "1")),
+//!     slog_scope::scope(&slog_scope::logger().new(slog_o!("scope" => "1")),
 //!         || foo()
 //!     );
 //! }
@@ -58,22 +58,34 @@ use crossbeam::sync::ArcCell;
 
 /// Log a critical level message using current scope logger
 #[macro_export]
-macro_rules! crit( ($($args:tt)+) => { slog_crit![$crate::logger(), $($args)+]; };);
+macro_rules! crit( ($($args:tt)+) => {
+    $crate::with_logger(|logger| slog_crit![logger, $($args)+])
+};);
 /// Log a error level message using current scope logger
 #[macro_export]
-macro_rules! error( ($($args:tt)+) => { slog_error![$crate::logger(), $($args)+]; };);
+macro_rules! error( ($($args:tt)+) => {
+    $crate::with_logger(|logger| slog_error![logger, $($args)+])
+};);
 /// Log a warning level message using current scope logger
 #[macro_export]
-macro_rules! warn( ($($args:tt)+) => { slog_warn![$crate::logger(), $($args)+]; };);
+macro_rules! warn( ($($args:tt)+) => {
+    $crate::with_logger(|logger| slog_warn![logger, $($args)+])
+};);
 /// Log a info level message using current scope logger
 #[macro_export]
-macro_rules! info( ($($args:tt)+) => { slog_info![$crate::logger(), $($args)+]; };);
+macro_rules! info( ($($args:tt)+) => {
+    $crate::with_logger(|logger| slog_info![logger, $($args)+])
+};);
 /// Log a debug level message using current scope logger
 #[macro_export]
-macro_rules! debug( ($($args:tt)+) => { slog_debug![$crate::logger(), $($args)+]; };);
+macro_rules! debug( ($($args:tt)+) => {
+    $crate::with_logger(|logger| slog_debug![logger, $($args)+])
+};);
 /// Log a trace level message using current scope logger
 #[macro_export]
-macro_rules! trace( ($($args:tt)+) => { slog_trace![$crate::logger(), $($args)+]; };);
+macro_rules! trace( ($($args:tt)+) => {
+    $crate::with_logger(|logger| slog_trace![logger, $($args)+])
+};);
 
 thread_local! {
     static TL_SCOPES: RefCell<Vec<*const slog::Logger>> = RefCell::new(Vec::with_capacity(8))
@@ -148,6 +160,10 @@ impl Drop for ScopeGuard {
 }
 
 /// Access the `Logger` for the current logging scope
+///
+/// This function needs to clone an underlying scoped
+/// `Logger`. If performance is of vital importance,
+/// use `with_logger`.
 pub fn logger() -> Logger {
     TL_SCOPES.with(|s| {
         let s = s.borrow();
