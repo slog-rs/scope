@@ -6,9 +6,18 @@
 //! Set of macros is also provided as an alternative to original `slog` crate macros, for logging
 //! directly to `Logger` of the current logging scope.
 //!
-//! Note: Part of a `slog` logging philosophy is ability to freely express logging contexts
-//! according to logical structure, rather than code structure. By using logging scopes the logging
-//! context is tied to code flow again, which is less expressive.
+//! # Set global logger upfront
+//!
+//! **Warning**: Since `slog-scope` version 4.0.0, `slog-scope` defaults to
+//! panicking on logging if no scope or global logger was set. Because of it, it
+//! is advised to always set a global logger upfront with `set_global_logger`.
+//!
+//! # Using `slog-scope` as a part of API is not advised
+//!
+//! Part of a `slog` logging philosophy is ability to freely express logging contexts
+//! according to logical structure, rather than callstack structure. By using
+//! logging scopes the logging context is tied to code flow again, which is less
+//! expressive.
 //!
 //! It is generally advised **NOT** to use `slog_scope` in libraries. Read more in
 //! [slog-rs FAQ](https://github.com/slog-rs/slog/wiki/FAQ#do-i-have-to-pass-logger-around)
