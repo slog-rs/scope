@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## 4.0.0 - UNRELEASED
 ### Changed
 
+* Default to panicking instead of discarding messages
 * Relicensed under MPL-2.0/MIT/Apache-2.0
 
 ## 3.0.0 - 2017-04-11

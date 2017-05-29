@@ -42,7 +42,6 @@
 //!     );
 //! }
 
-
 #![warn(missing_docs)]
 
 #[macro_use(o)]
@@ -56,6 +55,8 @@ use slog::*;
 use std::sync::Arc;
 use std::cell::RefCell;
 use crossbeam::sync::ArcCell;
+
+use std::result;
 
 /// Log a critical level message using current scope logger
 #[macro_export]
@@ -100,6 +101,23 @@ lazy_static! {
     );
 }
 
+struct NoGlobalLoggerSet;
+
+impl slog::Drain for NoGlobalLoggerSet {
+    type Ok = ();
+    type Err = slog::Never;
+
+    fn log(&self,
+           _record: &Record,
+           _values: &OwnedKVList)
+        -> result::Result<Self::Ok, Self::Err> {
+            panic!(
+            "slog-scope: No logger set. Use `slog_scope::set_global_logger` or `slog_scope::scope`."
+            )
+        }
+}
+
+
 /// Guard resetting global logger
 ///
 /// On drop it will reset global logger to `slog::Discard`.
@@ -128,7 +146,7 @@ impl Drop for GlobalLoggerGuard {
         if !self.canceled {
             let _ = GLOBAL_LOGGER.set(
                 Arc::new(
-                    slog::Logger::root(slog::Discard, o!())
+                    slog::Logger::root(NoGlobalLoggerSet, o!())
                     )
                 );
         }
