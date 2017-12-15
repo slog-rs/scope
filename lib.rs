@@ -53,13 +53,13 @@
 
 #![warn(missing_docs)]
 
-#[macro_use(o)]
+#[macro_use(o, kv)]
 extern crate slog;
 #[macro_use]
 extern crate lazy_static;
 extern crate crossbeam;
 
-use slog::*;
+use slog::{Logger, Record, OwnedKVList};
 
 use std::sync::Arc;
 use std::cell::RefCell;
