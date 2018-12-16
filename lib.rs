@@ -53,7 +53,7 @@
 
 #![warn(missing_docs)]
 
-#[macro_use(o, kv)]
+#[macro_use(o)]
 extern crate slog;
 #[macro_use]
 extern crate lazy_static;
