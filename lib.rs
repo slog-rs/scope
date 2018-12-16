@@ -63,7 +63,7 @@ use slog::{Logger, Record, OwnedKVList};
 
 use std::sync::Arc;
 use std::cell::RefCell;
-use crossbeam::sync::ArcCell;
+use crossbeam::atomic::ArcCell;
 
 use std::result;
 
