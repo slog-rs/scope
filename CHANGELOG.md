@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## 4.1.1 - 2018-12-20
+
+* Fix dependency reqs for building with older `slog` versions
+
+## 4.1.0 - 2018-12-16
+### Changed
+
+* Update `crossbeam` and `lazy_static`
+
 ## 4.0.1 - 2017-12-14
 ### Changed
 
