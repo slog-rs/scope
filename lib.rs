@@ -57,13 +57,13 @@
 extern crate slog;
 #[macro_use]
 extern crate lazy_static;
-extern crate crossbeam;
+extern crate arc_swap;
 
 use slog::{Logger, Record, OwnedKVList};
 
 use std::sync::Arc;
 use std::cell::RefCell;
-use crossbeam::atomic::ArcCell;
+use arc_swap::ArcSwap;
 
 use std::result;
 
@@ -103,7 +103,7 @@ thread_local! {
 }
 
 lazy_static! {
-    static ref GLOBAL_LOGGER : ArcCell<slog::Logger> = ArcCell::new(
+    static ref GLOBAL_LOGGER : ArcSwap<slog::Logger> = ArcSwap::from(
         Arc::new(
             slog::Logger::root(slog::Discard, o!())
         )
@@ -153,7 +153,7 @@ impl GlobalLoggerGuard {
 impl Drop for GlobalLoggerGuard {
     fn drop(&mut self) {
         if !self.canceled {
-            let _ = GLOBAL_LOGGER.set(
+            GLOBAL_LOGGER.store(
                 Arc::new(
                     slog::Logger::root(NoGlobalLoggerSet, o!())
                     )
@@ -165,7 +165,7 @@ impl Drop for GlobalLoggerGuard {
 
 /// Set global `Logger` that is returned by calls like `logger()` outside of any logging scope.
 pub fn set_global_logger(l: slog::Logger) -> GlobalLoggerGuard {
-    let _ = GLOBAL_LOGGER.set(Arc::new(l));
+    GLOBAL_LOGGER.store(Arc::new(l));
 
     GlobalLoggerGuard::new()
 }
@@ -197,7 +197,7 @@ pub fn logger() -> Logger {
         let s = s.borrow();
         match s.last() {
             Some(logger) => (unsafe {&**logger}).clone(),
-            None => (*GLOBAL_LOGGER.get()).clone(),
+            None => (*GLOBAL_LOGGER.load()).clone(),
         }
     })
 }
@@ -212,7 +212,7 @@ where F : FnOnce(&Logger) -> R {
         let s = s.borrow();
         match s.last() {
             Some(logger) => f(unsafe {&**logger}),
-            None => f(&(*GLOBAL_LOGGER.get())),
+            None => f(&(*GLOBAL_LOGGER.peek())),
         }
     })
 }
