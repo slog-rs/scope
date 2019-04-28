@@ -19,5 +19,5 @@ lazy_static = "1.2"
 arc-swap = "0.3"
 
 [dev-dependencies]
-slog-term = "~2.0.0-4"
+slog-term = "2"
 slog-async = "2"
