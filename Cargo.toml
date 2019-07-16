@@ -1,6 +1,6 @@
 [package]
 name = "slog-scope"
-version = "4.1.1"
+version = "4.1.2"
 authors = ["Dawid Ciężarkiewicz <dpc@dpc.pw>"]
 description = "Logging scopes for slog-rs"
 keywords = ["slog", "logging", "slog", "log"]
