@@ -67,35 +67,37 @@ use arc_swap::ArcSwap;
 
 use std::result;
 
+pub use slog::{slog_crit, slog_debug, slog_error, slog_info, slog_trace, slog_warn};
+
 /// Log a critical level message using current scope logger
 #[macro_export]
 macro_rules! crit( ($($args:tt)+) => {
-    $crate::with_logger(|logger| slog_crit![logger, $($args)+])
+    $crate::with_logger(|logger| $crate::slog_crit![logger, $($args)+])
 };);
 /// Log a error level message using current scope logger
 #[macro_export]
 macro_rules! error( ($($args:tt)+) => {
-    $crate::with_logger(|logger| slog_error![logger, $($args)+])
+    $crate::with_logger(|logger| $crate::slog_error![logger, $($args)+])
 };);
 /// Log a warning level message using current scope logger
 #[macro_export]
 macro_rules! warn( ($($args:tt)+) => {
-    $crate::with_logger(|logger| slog_warn![logger, $($args)+])
+    $crate::with_logger(|logger| $crate::slog_warn![logger, $($args)+])
 };);
 /// Log a info level message using current scope logger
 #[macro_export]
 macro_rules! info( ($($args:tt)+) => {
-    $crate::with_logger(|logger| slog_info![logger, $($args)+])
+    $crate::with_logger(|logger| $crate::slog_info![logger, $($args)+])
 };);
 /// Log a debug level message using current scope logger
 #[macro_export]
 macro_rules! debug( ($($args:tt)+) => {
-    $crate::with_logger(|logger| slog_debug![logger, $($args)+])
+    $crate::with_logger(|logger| $crate::slog_debug![logger, $($args)+])
 };);
 /// Log a trace level message using current scope logger
 #[macro_export]
 macro_rules! trace( ($($args:tt)+) => {
-    $crate::with_logger(|logger| slog_trace![logger, $($args)+])
+    $crate::with_logger(|logger| $crate::slog_trace![logger, $($args)+])
 };);
 
 thread_local! {
