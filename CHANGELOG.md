@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+* Update the arc-swap dependency to 0.4.
+
 ## 4.1.2 - 2019-07-18
 
 * Call `slog` macros via `$crate::` prefix to prevent the users of this crate from having to manually import `slog_trace`, `slog_debug`, etc.
