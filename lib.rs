@@ -199,7 +199,7 @@ pub fn logger() -> Logger {
         let s = s.borrow();
         match s.last() {
             Some(logger) => (unsafe {&**logger}).clone(),
-            None => (*GLOBAL_LOGGER.load()).clone(),
+            None => Logger::clone(&GLOBAL_LOGGER.load())
         }
     })
 }
@@ -214,7 +214,7 @@ where F : FnOnce(&Logger) -> R {
         let s = s.borrow();
         match s.last() {
             Some(logger) => f(unsafe {&**logger}),
-            None => f(&(*GLOBAL_LOGGER.peek())),
+            None => f(&GLOBAL_LOGGER.load()),
         }
     })
 }
