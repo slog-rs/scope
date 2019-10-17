@@ -31,3 +31,10 @@ For more information, help, to report issues etc. see [slog-rs][slog-rs].
 
 [slog-rs]: //github.com/slog-rs/slog
 
+
+
+## Verification Recommendation
+
+To help with the maintaince, the ownership of this crate is potentially shared between multiple developers.
+It is recommend to always use [cargo-crev](https://github.com/crev-dev/cargo-crev/tree/master/cargo-crev)
+to verify trustworthiness of each of your dependencies, including this one.
