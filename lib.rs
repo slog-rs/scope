@@ -135,7 +135,7 @@ impl slog::Drain for NoGlobalLoggerSet {
 /// This will `drop` any existing global logger.
 #[must_use]
 pub struct GlobalLoggerGuard {
-    canceled : bool,
+   pub canceled : bool,
 }
 
 impl GlobalLoggerGuard {
