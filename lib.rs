@@ -140,7 +140,7 @@ pub struct GlobalLoggerGuard {
 
 impl GlobalLoggerGuard {
     fn get_canceled(&self) -> bool {
-        return &self.canceled 
+        return &self.canceled; 
     }
 
     fn new() -> Self {
