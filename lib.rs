@@ -139,8 +139,9 @@ pub struct GlobalLoggerGuard {
 }
 
 impl GlobalLoggerGuard {
-    fn get_canceled(&self) -> bool {
-        return &self.canceled; 
+    /// Getter for canceled to check status 
+    pub fn get_canceled(self) -> bool {
+        return self.canceled;
     }
 
     fn new() -> Self {
