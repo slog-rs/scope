@@ -131,7 +131,8 @@ impl slog::Drain for NoGlobalLoggerSet {
 
 /// Guard resetting global logger
 ///
-/// On drop it will reset global logger to `slog::Discard`.
+/// On drop it will reset global logger to an `slog::Drain` that panics upon receiving a log record,
+/// so use outside of main is discouraged.
 /// This will `drop` any existing global logger.
 #[must_use]
 pub struct GlobalLoggerGuard {
