@@ -67,7 +67,10 @@ use arc_swap::ArcSwap;
 
 use std::result;
 
-pub use slog::{slog_crit, slog_debug, slog_error, slog_info, slog_trace, slog_warn};
+pub use slog::{
+    crit as slog_crit, debug as slog_debug, error as slog_error, info as slog_info,
+    trace as slog_trace, warn as slog_warn,
+};
 
 /// Log a critical level message using current scope logger
 #[macro_export]
