@@ -248,6 +248,6 @@ where F : FnOnce(&Logger) -> R {
 pub fn scope<SF, R>(logger: &slog::Logger, f: SF) -> R
     where SF: FnOnce() -> R
 {
-    let _guard = ScopeGuard::new(&logger);
+    let _guard = ScopeGuard::new(logger);
     f()
 }
