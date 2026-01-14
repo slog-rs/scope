@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 4.4.1 - 2026-01-14
+
+* Fix some warnings due to upstream slog changes
+
+## 4.4.0 - 2021-01-12
+
+* Slog updates
+
 ## 4.3.0 - 2019-10-25
 
 * Add `GlobalLoggerGuard::is_canceled`
