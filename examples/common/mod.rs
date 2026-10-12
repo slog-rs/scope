@@ -1,7 +1,6 @@
 use slog_scope;
 
 pub fn simulate_server() {
-
     let log = slog_scope::logger();
 
     let server = log.new(o!("host" => "localhost", "port" => "8080"));
@@ -21,5 +20,4 @@ pub fn simulate_server() {
     debug!(peer1, "disconnected");
     crit!(server, "internal error");
     info!(server, "exit");
-
 }
