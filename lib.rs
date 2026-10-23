@@ -59,11 +59,11 @@ extern crate slog;
 extern crate lazy_static;
 extern crate arc_swap;
 
-use slog::{Logger, Record, OwnedKVList};
+use slog::{Logger, OwnedKVList, Record};
 
-use std::sync::Arc;
-use std::cell::RefCell;
 use arc_swap::ArcSwap;
+use std::cell::RefCell;
+use std::sync::Arc;
 
 use std::result;
 
@@ -108,11 +108,8 @@ thread_local! {
 }
 
 lazy_static! {
-    static ref GLOBAL_LOGGER : ArcSwap<slog::Logger> = ArcSwap::from(
-        Arc::new(
-            slog::Logger::root(slog::Discard, o!())
-        )
-    );
+    static ref GLOBAL_LOGGER: ArcSwap<slog::Logger> =
+        ArcSwap::from(Arc::new(slog::Logger::root(slog::Discard, o!())));
 }
 
 struct NoGlobalLoggerSet;
@@ -121,16 +118,12 @@ impl slog::Drain for NoGlobalLoggerSet {
     type Ok = ();
     type Err = slog::Never;
 
-    fn log(&self,
-           _record: &Record,
-           _values: &OwnedKVList)
-        -> result::Result<Self::Ok, Self::Err> {
-            panic!(
+    fn log(&self, _record: &Record, _values: &OwnedKVList) -> result::Result<Self::Ok, Self::Err> {
+        panic!(
             "slog-scope: No logger set. Use `slog_scope::set_global_logger` or `slog_scope::scope`."
             )
-        }
+    }
 }
-
 
 /// Guard resetting global logger
 ///
@@ -139,7 +132,7 @@ impl slog::Drain for NoGlobalLoggerSet {
 /// This will `drop` any existing global logger.
 #[must_use]
 pub struct GlobalLoggerGuard {
-    canceled : bool,
+    canceled: bool,
 }
 
 impl GlobalLoggerGuard {
@@ -149,9 +142,7 @@ impl GlobalLoggerGuard {
     }
 
     fn new() -> Self {
-        GlobalLoggerGuard {
-            canceled: false,
-        }
+        GlobalLoggerGuard { canceled: false }
     }
 
     /// Cancel resetting global logger
@@ -163,15 +154,10 @@ impl GlobalLoggerGuard {
 impl Drop for GlobalLoggerGuard {
     fn drop(&mut self) {
         if !self.canceled {
-            GLOBAL_LOGGER.store(
-                Arc::new(
-                    slog::Logger::root(NoGlobalLoggerSet, o!())
-                    )
-                );
+            GLOBAL_LOGGER.store(Arc::new(slog::Logger::root(NoGlobalLoggerSet, o!())));
         }
     }
 }
-
 
 /// Set global `Logger` that is returned by calls like `logger()` outside of any logging scope.
 pub fn set_global_logger(l: slog::Logger) -> GlobalLoggerGuard {
@@ -182,10 +168,11 @@ pub fn set_global_logger(l: slog::Logger) -> GlobalLoggerGuard {
 
 struct ScopeGuard;
 
-
 impl ScopeGuard {
     fn new(logger: &slog::Logger) -> Self {
-        TL_SCOPES.with(|s| { s.borrow_mut().push(logger as *const Logger); });
+        TL_SCOPES.with(|s| {
+            s.borrow_mut().push(logger as *const Logger);
+        });
 
         ScopeGuard
     }
@@ -193,7 +180,11 @@ impl ScopeGuard {
 
 impl Drop for ScopeGuard {
     fn drop(&mut self) {
-        TL_SCOPES.with(|s| { s.borrow_mut().pop().expect("TL_SCOPES should contain a logger"); })
+        TL_SCOPES.with(|s| {
+            s.borrow_mut()
+                .pop()
+                .expect("TL_SCOPES should contain a logger");
+        })
     }
 }
 
@@ -206,8 +197,8 @@ pub fn logger() -> Logger {
     TL_SCOPES.with(|s| {
         let s = s.borrow();
         match s.last() {
-            Some(logger) => (unsafe {&**logger}).clone(),
-            None => Logger::clone(&GLOBAL_LOGGER.load())
+            Some(logger) => (unsafe { &**logger }).clone(),
+            None => Logger::clone(&GLOBAL_LOGGER.load()),
         }
     })
 }
@@ -216,12 +207,14 @@ pub fn logger() -> Logger {
 ///
 /// This function doesn't have to clone the Logger
 /// so it might be a bit faster.
-pub fn with_logger<F, R>(f : F) -> R
-where F : FnOnce(&Logger) -> R {
+pub fn with_logger<F, R>(f: F) -> R
+where
+    F: FnOnce(&Logger) -> R,
+{
     TL_SCOPES.with(|s| {
         let s = s.borrow();
         match s.last() {
-            Some(logger) => f(unsafe {&**logger}),
+            Some(logger) => f(unsafe { &**logger }),
             None => f(&GLOBAL_LOGGER.load()),
         }
     })
@@ -246,7 +239,8 @@ where F : FnOnce(&Logger) -> R {
 /// Note: Thread scopes are thread-local. Each newly spawned thread starts
 /// with a global logger, as a current logger.
 pub fn scope<SF, R>(logger: &slog::Logger, f: SF) -> R
-    where SF: FnOnce() -> R
+where
+    SF: FnOnce() -> R,
 {
     let _guard = ScopeGuard::new(logger);
     f()
